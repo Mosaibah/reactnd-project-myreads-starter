@@ -58,14 +58,14 @@ class BooksApp extends React.Component {
                 <h2 className="bookshelf-title">currentlyReading</h2>
                 <Shelf section="currentlyReading" books={this.state.books} getBook={BooksAPI.get()}/>
               </div>
-              {/* <div className="bookshelf">
+              <div className="bookshelf">
                 <h2 className="bookshelf-title">Want To Read</h2>
                 <Shelf section="wantToRead" books={this.state.books}/>
               </div>
               <div className="bookshelf">
                 <h2 className="bookshelf-title">Read</h2>
                 <Shelf section="read" books={this.state.books}/>
-              </div> */}
+              </div>
       
               </div>
             </div>
