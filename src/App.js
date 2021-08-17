@@ -23,6 +23,8 @@ class BooksApp extends React.Component {
         });
       })
     }
+
+    
     
     render() {
       
@@ -52,21 +54,20 @@ class BooksApp extends React.Component {
         ) : (
           <div className="list-books">
             <Header/>
-            <div className="list-books-content">
-              <div>
-              <div className="bookshelf">
-                <h2 className="bookshelf-title">currentlyReading</h2>
-                <Shelf section="currentlyReading" books={this.state.books} getBook={BooksAPI.get()}/>
-              </div>
-              <div className="bookshelf">
-                <h2 className="bookshelf-title">Want To Read</h2>
-                <Shelf section="wantToRead" books={this.state.books}/>
-              </div>
-              <div className="bookshelf">
-                <h2 className="bookshelf-title">Read</h2>
-                <Shelf section="read" books={this.state.books}/>
-              </div>
-      
+              <div className="list-books-content">
+                <div>
+                  <div className="bookshelf">
+                    <h2 className="bookshelf-title">currently Reading</h2>
+                        <Shelf section="currentlyReading" books={this.state.books} />
+                  </div>
+                  <div className="bookshelf">
+                  <h2 className="bookshelf-title">Want To Read</h2>
+                      <Shelf section="wantToRead" books={this.state.books}/>                    
+                </div>
+                <div className="bookshelf">
+                  <h2 className="bookshelf-title">Read</h2>
+                      <Shelf section="read" books={this.state.books}/>
+                </div>
               </div>
             </div>
             <div className="open-search">

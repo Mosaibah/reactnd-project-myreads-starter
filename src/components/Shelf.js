@@ -1,20 +1,26 @@
 import React from 'react'
-import Book from './Book'
+import ClassBook from './ClassBook'
+import * as BooksAPI from '../BooksAPI'
 
-const Shelf = ({section, books, getBook}) => {
-    const booksCategory = books.filter((book) => book.shelf === section)
-    console.log(books)
-    return (
+
+
+const Shelf = ({section, books}) => {
+
+    const handleChanger =  (book,event)=>{
         
-            <div className="bookshelf-books">
-                <ol className="books-grid">
-                {booksCategory.map((book) => (
-                    <Book book={book} />
-                ))}
+        // BooksAPI.update(book, event.target.value)
+    }
 
-                </ol>
-            </div>
-      
+    const booksCategory = books.filter((book) => book.shelf === section)
+    
+    return (
+        <div className="bookshelf-books">
+            <ol className="books-grid">
+                {booksCategory.map((book)=>(
+                    <ClassBook book={book} key={book.id} handleChanger={handleChanger}/>
+                ))}
+            </ol>
+        </div>
     )
 }
 
