@@ -12,21 +12,57 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    showSearchPage: false
+    showSearchPage: true,
+    search: '',
+    searchBooks: [],
+    loading: false,
+    loadSearch: false
   }
 
   componentDidMount(){
     BooksAPI.getAll().then(
       (res) => {
         this.setState({
-          books: res
+          books: res,
+          loading: true
         });
       })
     }
+    
+    
+    handleSearch = (event)=>{
+      BooksAPI.update(event.target.value).then(
+        (res) => {
+          this.setState({
+            searchBooks: res,
+            loadSearch: true
+          });
+        }
+      )
+    }
+    
+
+
+    changeShelf = (changedBook, shelf) => {
+      BooksAPI.update(changedBook, shelf).then(response => {
+        // set shelf for new or updated book
+        changedBook.shelf = shelf;
+        // update state with changed book
+        this.setState(prevState => ({
+          books: prevState.books
+            // remove updated book from array
+            .filter(book => book.id !== changedBook.id)
+            // add updated book to array
+            .concat(changedBook)
+        }));
+      });
+    };
 
     
     
-    render() {
+    render() {  
+
+
       
     return (
       <div className="app">
@@ -42,9 +78,18 @@ class BooksApp extends React.Component {
 
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
-
+                */
+              }
+                <input type="text" placeholder="Search by title or author" onChange={this.handleSearch} value={this.state.search}/>
+                <ul>
+                  {this.state.loadSearch?(
+                    this.state.searchBooks.map((book)=>(
+                    <li>
+                      <span>{book}</span>
+                    </li>
+                      // {/* <button onClick={(e)=>BooksAPI.update(book, "currentlyReading")}>add</button> */}
+                  ))): <div>no books</div>}
+                </ul>
               </div>
             </div>
             <div className="search-books-results">
@@ -54,19 +99,20 @@ class BooksApp extends React.Component {
         ) : (
           <div className="list-books">
             <Header/>
+            {console.log(this.state.books)}
               <div className="list-books-content">
                 <div>
                   <div className="bookshelf">
                     <h2 className="bookshelf-title">currently Reading</h2>
-                        <Shelf section="currentlyReading" books={this.state.books} />
+                        <Shelf section="currentlyReading" books={this.state.books} changeShelf={this.changeShelf}/>
                   </div>
                   <div className="bookshelf">
                   <h2 className="bookshelf-title">Want To Read</h2>
-                      <Shelf section="wantToRead" books={this.state.books}/>                    
+                      <Shelf section="wantToRead" books={this.state.books} changeShelf={this.changeShelf}/>                    
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Read</h2>
-                      <Shelf section="read" books={this.state.books}/>
+                      <Shelf section="read" books={this.state.books} changeShelf={this.changeShelf}/>
                 </div>
               </div>
             </div>

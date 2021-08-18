@@ -1,27 +1,23 @@
-import React from 'react'
-import ClassBook from './ClassBook'
-import * as BooksAPI from '../BooksAPI'
+import React from "react";
+import ClassBook from "./ClassBook";
 
+const Shelf = ({ section, books, changeShelf }) => {
+  const booksCategory = books.filter((book) => book.shelf === section);
 
+  return (
+    <div className="bookshelf-books">
+      <ol className="books-grid">
+        {booksCategory.map((book) => (
+          <ClassBook
+            book={book}
+            books={books}
+            key={book.id}
+            changeShelf={changeShelf}
+          />
+        ))}
+      </ol>
+    </div>
+  );
+};
 
-const Shelf = ({section, books}) => {
-
-    const handleChanger =  (book,event)=>{
-        
-        // BooksAPI.update(book, event.target.value)
-    }
-
-    const booksCategory = books.filter((book) => book.shelf === section)
-    
-    return (
-        <div className="bookshelf-books">
-            <ol className="books-grid">
-                {booksCategory.map((book)=>(
-                    <ClassBook book={book} key={book.id} handleChanger={handleChanger}/>
-                ))}
-            </ol>
-        </div>
-    )
-}
-
-export default Shelf
+export default Shelf;
