@@ -1,129 +1,126 @@
-import React from 'react'
-import * as BooksAPI from './BooksAPI'
-import './App.css'
-import Header from './components/layouts/Header'
-import Shelf from './components/Shelf'
+import React from "react";
+import * as BooksAPI from "./BooksAPI";
+import "./App.css";
+
+import Search from "./components/Search";
+import Home from "./components/Home";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 class BooksApp extends React.Component {
   state = {
     books: [],
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: true,
-    search: '',
-    searchBooks: [],
-    loading: false,
-    loadSearch: false
+    showSearchPage: false, //loading page
+    search: "", //search therm in input
+    searchBooks: [], //books user search for it
+    loading: false, //loading for home books
+    loadSearch: false,
+    //
+    booksFromSearch: [],
+    booksWithNoShelf: [],
+    // Play
+    book1Id: "",
+  };
+
+  componentDidMount() {
+    BooksAPI.getAll().then((res) => {
+      this.setState({
+        books: res,
+        loading: true,
+      });
+    });
   }
 
-  componentDidMount(){
-    BooksAPI.getAll().then(
-      (res) => {
+  handleSearch = async (event) => {
+    await this.setState({
+      search: event.target.value,
+    });
+    console.log(this.state.search);
+    this.state.search.length > 0 && this.handleBooksSearch(this.state.search);
+  };
+
+  handleBooksSearch = async (search) => {
+    BooksAPI.search(search).then((res) => {
+      if (res && !res.error) {
         this.setState({
-          books: res,
-          loading: true
+          booksFromSearch: res.map((booksSearch) => {
+            this.state.books.forEach((book) => {
+              if (booksSearch.id === book.id) booksSearch.shelf = book.shelf;
+            });
+            return booksSearch;
+          }), //map
         });
-      })
-    }
-    
-    
-    handleSearch = (event)=>{
-      BooksAPI.update(event.target.value).then(
-        (res) => {
-          this.setState({
-            searchBooks: res,
-            loadSearch: true
-          });
-        }
-      )
-    }
-    
 
+        let filterAdust = this.state.booksFromSearch.filter(
+          (book) => book.shelf !== "currentlyReading"
+        );
+        filterAdust = filterAdust.filter((book) => book.shelf !== "wantToRead");
+        filterAdust = filterAdust.filter((book) => book.shelf !== "read");
+        this.setState({ booksWithNoShelf: filterAdust });
 
-    changeShelf = (changedBook, shelf) => {
-      BooksAPI.update(changedBook, shelf).then(response => {
-        // set shelf for new or updated book
-        changedBook.shelf = shelf;
-        // update state with changed book
-        this.setState(prevState => ({
-          books: prevState.books
-            // remove updated book from array
-            .filter(book => book.id !== changedBook.id)
-            // add updated book to array
-            .concat(changedBook)
-        }));
+        this.setState({
+          searchBooks: this.state.booksFromSearch,
+          loadSearch: true,
+        });
+      } else {
+        this.setState({
+          searchBooks: `no books like ${search}`,
+          loadSearch: false,
+        });
+      }
+    });
+  };
+
+  changeShelf = async (book, shelf, search) => {
+    if (shelf === "none") {
+      await BooksAPI.update(book, shelf);
+      await BooksAPI.getAll().then((res) => {
+        this.setState({ books: res });
       });
-    };
+      let newBooks = this.state.books.filter(
+        (thisBook) => thisBook.id !== book.id
+      );
+      this.setState({
+        books: newBooks,
+      });
+      if (this.state.search.length > 0) {
+        this.handleBooksSearch(this.state.search);
+      }
+    } else {
+      await BooksAPI.update(book, shelf);
+      BooksAPI.getAll().then((res) => {
+        this.setState({ books: res });
+      }); //end then
+      if (this.state.search.length > 0) {
+        console.log("search");
+        this.handleBooksSearch(this.state.search);
+      }
+    } //end else
+  }; //end change
 
-    
-    
-    render() {  
-
-
-      
+  render() {
     return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */
-              }
-                <input type="text" placeholder="Search by title or author" onChange={this.handleSearch} value={this.state.search}/>
-                <ul>
-                  {this.state.loadSearch?(
-                    this.state.searchBooks.map((book)=>(
-                    <li>
-                      <span>{book}</span>
-                    </li>
-                      // {/* <button onClick={(e)=>BooksAPI.update(book, "currentlyReading")}>add</button> */}
-                  ))): <div>no books</div>}
-                </ul>
-              </div>
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
-          </div>
-        ) : (
-          <div className="list-books">
-            <Header/>
-            {console.log(this.state.books)}
-              <div className="list-books-content">
-                <div>
-                  <div className="bookshelf">
-                    <h2 className="bookshelf-title">currently Reading</h2>
-                        <Shelf section="currentlyReading" books={this.state.books} changeShelf={this.changeShelf}/>
-                  </div>
-                  <div className="bookshelf">
-                  <h2 className="bookshelf-title">Want To Read</h2>
-                      <Shelf section="wantToRead" books={this.state.books} changeShelf={this.changeShelf}/>                    
-                </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Read</h2>
-                      <Shelf section="read" books={this.state.books} changeShelf={this.changeShelf}/>
-                </div>
-              </div>
-            </div>
-            <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
-            </div>
-          </div>
-        )}
-      </div>
-    )
+      <Router>
+        <div className="app">
+          <Switch>
+            {/* Search Router  */}
+            <Route exact path="/Search" >
+              <Search
+                handleSearch={this.handleSearch}
+                search={this.state.search}
+                booksWithNoShelf={this.state.booksWithNoShelf}
+                changeShelf={this.changeShelf}
+                loadSearch={this.state.loadSearch}
+                books={this.state.books}
+              />
+            </Route>
+            {/* Home Router */}
+            <Route path="/" >
+              <Home books={this.state.books} changeShelf={this.changeShelf} />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    );
   }
 }
 
-export default BooksApp
+export default BooksApp;

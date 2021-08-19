@@ -7,21 +7,25 @@ body {
 }
 
 body, .app {
-  background: white;
+  /* Background */
+  background:#fff;
+  font-family: sans-serif;
+
 }
 
 /* main page */
 
 .list-books-title {
   padding: 10px 0;
-  background: #2e7c31;
+  /* background of head */
+  background: #0c3052; 
   text-align: center;
 }
 
 .list-books-title h1 {
   font-weight: 400;
   margin: 0;
-  color: white;
+  color: #daebf9;
 }
 
 .list-books-content {
@@ -31,6 +35,8 @@ body, .app {
 
 .bookshelf {
   padding: 0 10px 20px;
+  color: #1a65aa;
+  text-align: center;
 }
 
 @media (min-width: 600px) {
@@ -40,7 +46,8 @@ body, .app {
 }
 
 .bookshelf-title {
-  border-bottom: 1px solid #dedede;
+  /* border color */
+  border-bottom: 1px solid #9fcaf0;
 }
 
 .bookshelf-books {
@@ -53,12 +60,13 @@ body, .app {
   bottom: 25px;
 }
 
-.open-search button {
+.open-search__link {
   display: block;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #2e7d32;
+  /* search color */
+  background: #0c3052;
   background-image: url('./icons/add.svg');
   background-repeat: no-repeat;
   background-position: center;
@@ -68,8 +76,9 @@ body, .app {
   outline: 0;
 }
 
-.open-search button:hover {
-  background-color: rgb(0, 102, 0);
+.open-search__link:hover {
+  /* search hover color */
+  background-color: #4798e3;
 }
 
 
@@ -152,7 +161,8 @@ button:active {
 }
 
 .book-authors {
-  color: #999;
+  /* authors color */
+  color: #c5c6c7;
 }
 
 .book-top {
@@ -169,13 +179,15 @@ button:active {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #60ac5d;
+  /* button color */
+  background: #0c3052;
   background-image: url('./icons/arrow-drop-down.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
+
 
 .book-shelf-changer select {
   width: 100%;
@@ -195,4 +207,12 @@ button:active {
   padding: 20px 10px 0;
   text-align: center;
   font-size: 0.8em;
+  
+}
+
+.no-books{
+  text-align: center;
+  font-size: 30px;
+  color: #0c3052;
+  font-weight: bold;
 }

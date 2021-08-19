@@ -1,14 +1,16 @@
 import React from "react";
-import ClassBook from "./ClassBook";
+import Book from "./Book";
 
-const Shelf = ({ section, books, changeShelf }) => {
+const Shelf = ({ section, books, changeShelf, header }) => {
   const booksCategory = books.filter((book) => book.shelf === section);
 
   return (
+    <div className="bookshelf">
+    <h2 className="bookshelf-title">{header}</h2>
     <div className="bookshelf-books">
       <ol className="books-grid">
         {booksCategory.map((book) => (
-          <ClassBook
+          <Book
             book={book}
             books={books}
             key={book.id}
@@ -16,6 +18,7 @@ const Shelf = ({ section, books, changeShelf }) => {
           />
         ))}
       </ol>
+    </div>
     </div>
   );
 };

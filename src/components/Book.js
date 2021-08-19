@@ -3,30 +3,13 @@ import React, { Component } from "react";
 export default class ClassBook extends Component {
   state = {
     loading: true,
-    options: ["currentlyReading", "wantToRead", "read", "none"],
+  };
+  
+  updateShelf = (event) => {
+    this.props.changeShelf(this.props.book, event.target.value);
   };
 
-  handleValue() {
-    const option = this.state.options.filter(
-      (option) => option === this.props.book.shelf
-    );
-    return option[0];
-  }
-
-  updateShelf = (event) =>
-    this.props.changeShelf(this.props.book, event.target.value);
-
   render() {
-    let currentShelf = "none";
-
-    // if book is in current list, set current shelf to book.shelf
-    for (let item of this.props.books) {
-      if (item.id === this.props.book.id) {
-        currentShelf = item.shelf;
-        break;
-      }
-    }
-
     return (
       <div>
         <li>
@@ -43,7 +26,10 @@ export default class ClassBook extends Component {
                 }}
               />
               <div className="book-shelf-changer">
-                <select onChange={this.updateShelf} value={this.handleValue()}>
+                <select
+                  onChange={this.updateShelf}
+                  value={this.props.book.shelf ? this.props.book.shelf : "none"}
+                >
                   <option value="move" disabled>
                     Move to...
                   </option>
@@ -57,6 +43,7 @@ export default class ClassBook extends Component {
             </div>
             <div className="book-title">{this.props.book.title}</div>
             <div className="book-authors">{this.props.book.authors}</div>
+            <div className="book-authors">{this.props.book.pageCount}</div>
           </div>
         </li>
       </div>
